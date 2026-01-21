@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RGMIS Admission Results</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #0f172a;
+  color: white;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* CONTAINER */
+.container {
+  width: 95%;
+  max-width: 1400px;
+  margin: 12px auto;
+}
+
+/* TITLE */
+h1 {
+  text-align: center;
+  font-size: clamp(1.6rem, 4vw, 3rem);
+  margin-bottom: 10px;
+}
+
+/* SEARCH */
+.search-box {
+  margin-bottom: 10px;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 14px;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  background: #020617;
+  color: white;
+  box-shadow: inset 0 0 0 2px #1e40af;
+}
+
+/* TABLE CONTAINER */
+.table-container {
+  height: 78vh;
+  overflow: hidden;
+  border-radius: 18px;
+}
+
+/* TABLE */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #0f172a;
+}
+
+/* FIXED HEADER */
+thead th {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  background: #1e40af;
+  padding: 14px 8px;
+  font-size: clamp(0.8rem, 1.5vw, 1.3rem);
+  z-index: 5;
+}
+
+/* AUTO SCROLL BODY */
+tbody {
+  display: block;
+  animation: autoScroll 35s linear infinite;
+}
+
+thead, tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+/* CELLS */
+td {
+  padding: 12px 6px;
+  text-align: center;
+  font-size: clamp(0.75rem, 1.4vw, 1.2rem);
+  border-bottom: 1px solid #334155;
+}
+
+/* STATUS COLORS */
+.granted  { color: #10b981; font-weight: 800; }
+.rejected { color: #ef4444; font-weight: 800; }
+.pending  { color: #f59e0b; font-weight: 800; }
+
+/* AUTO SCROLL */
+@keyframes autoScroll {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(-50%); }
+}
+
+/* MOBILE OPTIMIZATION */
+@media (max-width: 600px) {
+  .table-container {
+    height: 70vh;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>RGMIS Admission Test Results 2026–2027</h1>
+
+  <!-- SEARCH -->
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="Search by Name / Result">
+  </div>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>S.No</th>
+          <th>Name</th>
+          <th>B/DB</th>
+          <th>Admission Into</th>
+          <th>Results</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+const excelUrl = "student.csv";
+const tbody = document.getElementById("tbody");
+let allRows = [];
+
+fetch(excelUrl)
+  .then(r => r.arrayBuffer())
+  .then(data => {
+    const wb = XLSX.read(data, { type: "array" });
+    const sheet = wb.Sheets[wb.SheetNames[0]];
+    const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+    allRows = json.slice(1);
+    render(allRows, true);
+  });
+
+function render(rows, duplicate) {
+  tbody.innerHTML = "";
+  rows.forEach(addRow);
+  if (duplicate) rows.forEach(addRow);
+}
+
+function addRow(row) {
+  const tr = document.createElement("tr");
+  row.forEach((cell, i) => {
+    const td = document.createElement("td");
+    td.textContent = cell || "-";
+
+    if (i === 4) {
+      const t = (cell || "").toUpperCase();
+      if (t.includes("GRANTED") || t.includes("SELECTED")) td.classList.add("granted");
+      else if (t.includes("REJECTED") || t.includes("SORRY")) td.classList.add("rejected");
+      else td.classList.add("pending");
+    }
+    tr.appendChild(td);
+  });
+  tbody.appendChild(tr);
+}
+
+/* SEARCH + AUTO SCROLL CONTROL */
+document.getElementById("searchInput").addEventListener("input", e => {
+  const val = e.target.value.toLowerCase();
+
+  if (val) {
+    tbody.style.animationPlayState = "paused";
+    render(allRows.filter(r => r.join(" ").toLowerCase().includes(val)), false);
+  } else {
+    tbody.style.animationPlayState = "running";
+    render(allRows, true);
+  }
+});
+
+/* MOBILE TOUCH SUPPORT */
+const tableBox = document.querySelector(".table-container");
+
+tableBox.addEventListener("touchstart", () => {
+  tbody.style.animationPlayState = "paused";
+});
+
+tableBox.addEventListener("touchend", () => {
+  if (!document.getElementById("searchInput").value)
+    tbody.style.animationPlayState = "running";
+});
+</script>
+
+</body>
+</html>
