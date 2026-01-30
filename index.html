@@ -31,11 +31,38 @@ body {
   margin: 12px auto;
 }
 
-/* TITLE */
-h1 {
+/* ===== HEADER FIX ===== */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 12px;
   text-align: center;
-  font-size: clamp(1.6rem, 4vw, 3rem);
-  margin-bottom: 10px;
+}
+
+/* LOGO */
+.logo img {
+  height: 64px;
+  width: 64px;
+  object-fit: cover;
+  border-radius: 50%;
+  background: white;
+  padding: 4px;
+  transform: rotate(deg); /* force no rotation */
+}
+
+/* TITLE */
+.header h1 {
+  font-size: clamp(1.2rem, 3vw, 2.4rem);
+  line-height: 1.25;
+  font-weight: 800;
+}
+
+.header h1 span {
+  display: block;
+  font-size: clamp(1rem, 2.4vw, 1.6rem);
+  font-weight: 600;
 }
 
 /* SEARCH */
@@ -71,7 +98,6 @@ table {
 
 /* FIXED HEADER */
 thead th {
-  position: -webkit-sticky;
   position: sticky;
   top: 0;
   background: #1e40af;
@@ -111,10 +137,14 @@ td {
   100% { transform: translateY(-50%); }
 }
 
-/* MOBILE OPTIMIZATION */
+/* MOBILE */
 @media (max-width: 600px) {
   .table-container {
     height: 70vh;
+  }
+  .logo img {
+    height: 52px;
+    width: 52px;
   }
 }
 </style>
@@ -123,13 +153,24 @@ td {
 <body>
 
 <div class="container">
-  <h1>RGMIS Admission Test Results 2026–2027</h1>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo">
+      <img src="logo rgmis.jpg" alt="RGMIS Logo">
+    </div>
+    <h1>
+      RGM INTERNATIONAL SCHOOL, NANDYAL
+      <span>Admission Test Results 2026–2027</span>
+    </h1>
+  </div>
 
   <!-- SEARCH -->
   <div class="search-box">
     <input type="text" id="searchInput" placeholder="Search by Name / Result">
   </div>
 
+  <!-- TABLE -->
   <div class="table-container">
     <table>
       <thead>
@@ -144,6 +185,7 @@ td {
       <tbody id="tbody"></tbody>
     </table>
   </div>
+
 </div>
 
 <script>
