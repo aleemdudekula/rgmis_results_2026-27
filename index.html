@@ -10,11 +10,7 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap');
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
   font-family: 'Poppins', sans-serif;
@@ -29,7 +25,7 @@ body {
   margin: 12px auto;
 }
 
-/* ================= HEADER ================= */
+/* HEADER */
 .header {
   display: flex;
   align-items: center;
@@ -58,7 +54,7 @@ body {
   font-weight: 600;
 }
 
-/* ================= HOME BUTTONS ================= */
+/* HOME BUTTONS */
 .home-buttons {
   display: flex;
   justify-content: center;
@@ -81,7 +77,23 @@ body {
   background: #2563eb;
 }
 
-/* ================= SEARCH ================= */
+/* BACK BUTTON */
+.back-box {
+  display: none;
+  margin-bottom: 10px;
+}
+
+.back-box button {
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 700;
+  background: #334155;
+  color: white;
+  cursor: pointer;
+}
+
+/* SEARCH */
 .search-box {
   margin-bottom: 10px;
   display: none;
@@ -97,7 +109,7 @@ body {
   color: white;
 }
 
-/* ================= TABLE ================= */
+/* TABLE */
 .table-container {
   height: 78vh;
   overflow: hidden;
@@ -150,7 +162,7 @@ td {
 .rejected { color: #ef4444; font-weight: 800; }
 .pending  { color: #f59e0b; font-weight: 800; }
 
-/* SCROLL ANIMATION */
+/* SCROLL */
 @keyframes autoScroll {
   from { transform: translateY(0); }
   to   { transform: translateY(-50%); }
@@ -176,7 +188,12 @@ td {
   <!-- HOME -->
   <div class="home-buttons" id="home">
     <button onclick="loadResults('1_6')">Results : Classes 1 – 6</button>
-    <button onclick="loadResults('7_12')">Results : Classes 7 – 11</button>
+    <button onclick="loadResults('7_11')">Results : Classes 7 – 11</button>
+  </div>
+
+  <!-- BACK -->
+  <div class="back-box" id="backBox">
+    <button onclick="goHome()">← Back to Home</button>
   </div>
 
   <!-- SEARCH -->
@@ -203,8 +220,8 @@ td {
 </div>
 
 <script>
-/* ========== GOOGLE SHEET CSV LINKS ========== */
-const SHEET_1_6  =
+/* GOOGLE SHEET CSV LINKS */
+const SHEET_1_6 =
 "https://docs.google.com/spreadsheets/d/e/2PACX-1vRqHwSUqfM3N4HzVlc21Cf1Ua7bhQdRwFJ4Bt-BagAui4ZzSFSJEYJ7DTTXMqLZmnnFvpmLi7CYuyUL/pub?gid=0&single=true&output=csv";
 
 const SHEET_7_11 =
@@ -219,10 +236,22 @@ function loadResults(type) {
   excelUrl = type === "1_6" ? SHEET_1_6 : SHEET_7_11;
 
   document.getElementById("home").style.display = "none";
+  document.getElementById("backBox").style.display = "block";
   document.getElementById("searchBox").style.display = "block";
   document.getElementById("tableBox").style.display = "block";
 
   fetchData();
+}
+
+/* GO HOME */
+function goHome() {
+  document.getElementById("home").style.display = "flex";
+  document.getElementById("backBox").style.display = "none";
+  document.getElementById("searchBox").style.display = "none";
+  document.getElementById("tableBox").style.display = "none";
+
+  document.getElementById("searchInput").value = "";
+  tbody.innerHTML = "";
 }
 
 /* FETCH DATA */
@@ -253,7 +282,7 @@ function fetchData() {
     });
 }
 
-/* RENDER TABLE */
+/* RENDER */
 function render(rows, duplicate) {
   tbody.innerHTML = "";
   rows.forEach(addRow);
