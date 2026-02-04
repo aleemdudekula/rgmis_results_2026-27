@@ -247,12 +247,14 @@ function loadResults(type) {
   excelUrl = type === "1_6" ? SHEET_1_6 : SHEET_7_11;
 
   document.getElementById("home").style.display = "none";
+  document.getElementById("resultNote").style.display = "none"; // 👈 ADD THIS LINE
   document.getElementById("backBox").style.display = "block";
   document.getElementById("searchBox").style.display = "block";
   document.getElementById("tableBox").style.display = "block";
 
   fetchData();
 }
+
 
 /* GO HOME */
 function goHome() {
