@@ -31,7 +31,7 @@ body {
   margin: 12px auto;
 }
 
-/* ===== HEADER FIX ===== */
+/* HEADER */
 .header {
   display: flex;
   align-items: center;
@@ -49,7 +49,6 @@ body {
   border-radius: 50%;
   background: white;
   padding: 4px;
-  transform: rotate(deg); /* force no rotation */
 }
 
 /* TITLE */
@@ -109,7 +108,8 @@ thead th {
 /* AUTO SCROLL BODY */
 tbody {
   display: block;
-  animation: autoScroll 60s linear infinite;
+  --scroll-duration: 18s;
+  animation: autoScroll var(--scroll-duration) linear infinite;
 }
 
 thead, tbody tr {
@@ -133,19 +133,14 @@ td {
 
 /* AUTO SCROLL */
 @keyframes autoScroll {
-  0%   { transform: translateY(0); }
-  100% { transform: translateY(-50%); }
+  from { transform: translateY(0); }
+  to   { transform: translateY(-50%); }
 }
 
 /* MOBILE */
 @media (max-width: 600px) {
-  .table-container {
-    height: 70vh;
-  }
-  .logo img {
-    height: 52px;
-    width: 52px;
-  }
+  .table-container { height: 70vh; }
+  .logo img { height: 52px; width: 52px; }
 }
 </style>
 </head>
@@ -154,7 +149,6 @@ td {
 
 <div class="container">
 
-  <!-- HEADER -->
   <div class="header">
     <div class="logo">
       <img src="logo rgmis.jpg" alt="RGMIS Logo">
@@ -165,12 +159,10 @@ td {
     </h1>
   </div>
 
-  <!-- SEARCH -->
   <div class="search-box">
     <input type="text" id="searchInput" placeholder="Search by Name / Result">
   </div>
 
-  <!-- TABLE -->
   <div class="table-container">
     <table>
       <thead>
@@ -201,6 +193,7 @@ fetch(excelUrl)
     const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
     allRows = json.slice(1);
     render(allRows, true);
+    updateScrollSpeed();
   });
 
 function render(rows, duplicate) {
@@ -226,26 +219,37 @@ function addRow(row) {
   tbody.appendChild(tr);
 }
 
-/* SEARCH + AUTO SCROLL CONTROL */
+/* 🔑 DYNAMIC SCROLL SPEED */
+function updateScrollSpeed() {
+  const container = document.querySelector(".table-container");
+  const containerHeight = container.offsetHeight;
+  const contentHeight = tbody.scrollHeight;
+
+  const pixelsPerSecond = 60;
+  let duration = (contentHeight + containerHeight) / pixelsPerSecond;
+
+  duration = Math.max(20, Math.min(duration, 180));
+  tbody.style.setProperty("--scroll-duration", duration + "s");
+}
+
+/* SEARCH */
 document.getElementById("searchInput").addEventListener("input", e => {
   const val = e.target.value.toLowerCase();
 
   if (val) {
     tbody.style.animationPlayState = "paused";
     render(allRows.filter(r => r.join(" ").toLowerCase().includes(val)), false);
+    updateScrollSpeed();
   } else {
     tbody.style.animationPlayState = "running";
     render(allRows, true);
+    updateScrollSpeed();
   }
 });
 
-/* MOBILE TOUCH SUPPORT */
+/* MOBILE TOUCH */
 const tableBox = document.querySelector(".table-container");
-
-tableBox.addEventListener("touchstart", () => {
-  tbody.style.animationPlayState = "paused";
-});
-
+tableBox.addEventListener("touchstart", () => tbody.style.animationPlayState = "paused");
 tableBox.addEventListener("touchend", () => {
   if (!document.getElementById("searchInput").value)
     tbody.style.animationPlayState = "running";
