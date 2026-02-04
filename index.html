@@ -176,7 +176,7 @@ td {
   <!-- HOME -->
   <div class="home-buttons" id="home">
     <button onclick="loadResults('1_6')">Results : Classes 1 – 6</button>
-    <button onclick="loadResults('7_12')">Results : Classes 7 – 12</button>
+    <button onclick="loadResults('7_12')">Results : Classes 7 – 11</button>
   </div>
 
   <!-- SEARCH -->
@@ -207,7 +207,7 @@ td {
 const SHEET_1_6  =
 "https://docs.google.com/spreadsheets/d/e/2PACX-1vRqHwSUqfM3N4HzVlc21Cf1Ua7bhQdRwFJ4Bt-BagAui4ZzSFSJEYJ7DTTXMqLZmnnFvpmLi7CYuyUL/pub?gid=0&single=true&output=csv";
 
-const SHEET_7_12 =
+const SHEET_7_11 =
 "https://docs.google.com/spreadsheets/d/e/2PACX-1vRqHwSUqfM3N4HzVlc21Cf1Ua7bhQdRwFJ4Bt-BagAui4ZzSFSJEYJ7DTTXMqLZmnnFvpmLi7CYuyUL/pub?gid=264663954&single=true&output=csv";
 
 let excelUrl = "";
@@ -216,7 +216,7 @@ let allRows = [];
 
 /* LOAD RESULTS */
 function loadResults(type) {
-  excelUrl = type === "1_6" ? SHEET_1_6 : SHEET_7_12;
+  excelUrl = type === "1_6" ? SHEET_1_6 : SHEET_7_11;
 
   document.getElementById("home").style.display = "none";
   document.getElementById("searchBox").style.display = "block";
